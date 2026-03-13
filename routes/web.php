@@ -27,3 +27,5 @@ require __DIR__.'/employees.php';
 require __DIR__.'/production.php';
 require __DIR__.'/performance.php';
 require __DIR__.'/cash_loans.php';
+
+require __DIR__.'/database_backup.php';

@@ -80,6 +80,10 @@ background:linear-gradient(135deg,#a855f7,#ec4899);
 background:linear-gradient(135deg,#f59e0b,#d97706);
 }
 
+.card.backup{
+background:linear-gradient(135deg,#06b6d4,#0891b2);
+}
+
 /* RESPONSIVE HP */
 
 @media (max-width:768px){
@@ -130,6 +134,10 @@ Performa Karyawan
 
 <a class="card kasbon" href="/cash-loans">
 Kasbon Karyawan
+</a>
+
+<a class="card backup" href="/database-backup">
+Database Backup
 </a>
 
 </div>
