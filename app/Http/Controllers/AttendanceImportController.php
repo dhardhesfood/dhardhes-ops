@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Employee;
 use App\Models\AttendanceLog;
@@ -17,8 +18,22 @@ class AttendanceImportController extends Controller
 
     $employees = \App\Models\Employee::orderBy('name')->get();
 
+    $uploads = \DB::table('attendance_logs as a')
+        ->join('employees as e','e.id','=','a.employee_id')
+        ->select(
+            'e.id as employee_id',
+            'e.name',
+            \DB::raw("DATE_FORMAT(a.date,'%Y-%m') as month"),
+            \DB::raw("MAX(a.salary_paid) as salary_paid"),
+            \DB::raw("MAX(a.salary_paid_at) as salary_paid_at")
+        )
+        ->groupBy('e.id','e.name','month')
+        ->orderByRaw("DATE_FORMAT(a.date,'%Y-%m') DESC")
+        ->get();
+
     return view('attendance_upload',[
-        'employees'=>$employees
+        'employees'=>$employees,
+        'uploads'=>$uploads
     ]);
 
 }
@@ -32,7 +47,31 @@ class AttendanceImportController extends Controller
 
         $employee = Employee::findOrFail($request->employee_id);
 
-        $rows = Excel::toArray([], $request->file('file'));
+/*
+================================================
+SIMPAN FILE EXCEL KE STORAGE
+================================================
+*/
+
+$file = $request->file('file');
+
+$month = date('Y-m');
+
+$filename = strtolower(str_replace(' ','_',$employee->name)).'_'.$month.'.xlsx';
+
+$path = $file->storeAs(
+    'attendance/'.$month,
+    $filename,
+    'public'
+);
+
+/*
+================================================
+BACA EXCEL SEPERTI SEBELUMNYA
+================================================
+*/
+
+$rows = Excel::toArray([], $file);
 
         $sheet = $rows[0];
 
@@ -65,10 +104,12 @@ class AttendanceImportController extends Controller
     if ($checkIn && $checkOut) {
 
         $result = AttendanceCalculator::calculate(
-            $checkIn,
-            $checkOut,
-            $employee->daily_salary
-        );
+    $checkIn,
+    $checkOut,
+    $employee->daily_salary,
+    $employee->extra_job_salary,
+    $employee->meal_allowance
+);
 
     } else {
 
@@ -83,11 +124,14 @@ class AttendanceImportController extends Controller
 
     }
 
-    AttendanceLog::create([
+    AttendanceLog::updateOrCreate(
 
+    [
         'employee_id' => $employee->id,
-        'date' => $date,
+        'date' => $date
+    ],
 
+    [
         'check_in' => $checkIn,
         'check_out' => $checkOut,
 
@@ -99,15 +143,15 @@ class AttendanceImportController extends Controller
         'late_decimal' => $result['late_decimal'],
 
         'daily_salary' => $employee->daily_salary,
+
+        'extra_job_salary' => $employee->extra_job_salary,
+        'meal_allowance' => $employee->meal_allowance,
+        
         'daily_total' => $result['daily_total']
-    ]);
+    ]
+
+);
    }
-
-        foreach ($sheet as $row) {
-
-    // proses import
-
-    }
 
       $month = date('Y-m');
 

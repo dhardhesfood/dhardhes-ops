@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\AttendanceLog;
 use App\Models\Employee;
 use App\Services\AttendanceCalculator;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
@@ -16,15 +17,16 @@ class AttendanceController extends Controller
         $employee = Employee::findOrFail($request->employee_id);
 
         $result = AttendanceCalculator::calculate(
-            $request->check_in,
-            $request->check_out,
-            $employee->daily_salary
+        $request->check_in,
+        $request->check_out,
+        $employee->daily_salary,
+        $employee->extra_job_salary,
+        $employee->meal_allowance
         );
 
         AttendanceLog::create([
 
             'employee_id' => $employee->id,
-
             'date' => $request->date,
 
             'check_in' => $request->check_in,
@@ -40,6 +42,9 @@ class AttendanceController extends Controller
 
             'daily_salary' => $employee->daily_salary,
 
+            'extra_job_salary' => $employee->extra_job_salary,
+            'meal_allowance' => $employee->meal_allowance,
+
             'daily_total' => $result['daily_total']
 
         ]);
@@ -47,6 +52,19 @@ class AttendanceController extends Controller
         return response()->json([
             'message' => 'Absensi berhasil disimpan'
         ]);
+
+    }
+
+
+    public function destroy($employeeId,$month)
+    {
+
+        DB::table('attendance_logs')
+            ->where('employee_id',$employeeId)
+            ->whereRaw("DATE_FORMAT(date,'%Y-%m') = ?",[$month])
+            ->delete();
+
+        return back()->with('success','Data absensi berhasil dihapus');
 
     }
 

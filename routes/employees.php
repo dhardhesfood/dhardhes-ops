@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\EmployeeController;
 
 /*
 ================================
@@ -41,3 +42,5 @@ Route::post('/employees', function () {
     return redirect('/employees');
 
 });
+
+Route::post('/employees/{id}/toggle',[EmployeeController::class,'toggleStatus']);

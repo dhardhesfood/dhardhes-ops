@@ -2,9 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
-    //
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'daily_salary',
+        'extra_job_salary',
+        'meal_allowance',
+        'status'
+    ];
 }

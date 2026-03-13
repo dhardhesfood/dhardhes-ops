@@ -24,6 +24,9 @@ class AttendanceLog extends Model
         'late_decimal',
 
         'daily_salary',
+
+        'extra_job_salary',
+        'meal_allowance',
         'daily_total'
 
     ];

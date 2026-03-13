@@ -4,7 +4,7 @@ namespace App\Services;
 
 class AttendanceCalculator
 {
-    public static function calculate($checkIn, $checkOut, $dailySalary)
+    public static function calculate($checkIn, $checkOut, $dailySalary, $extraJobSalary, $mealAllowance)
     {
 
         $checkInTime = strtotime($checkIn);
@@ -28,8 +28,8 @@ class AttendanceCalculator
         }
 
         // pembulatan 15 menit
-        $overtimeRounded = round($overtimeMinutes / 15) * 15;
-        $lateRounded = round($lateMinutes / 15) * 15;
+        $overtimeRounded = self::roundMinutes($overtimeMinutes);
+        $lateRounded = self::roundMinutes($lateMinutes);
 
         // konversi ke jam
         $overtimeDecimal = $overtimeRounded / 60;
@@ -39,20 +39,60 @@ class AttendanceCalculator
         $overtimeMoney = $overtimeDecimal * 6000;
         $lateMoney = $lateDecimal * 4000;
 
-        $dailyTotal = intval($dailySalary + $overtimeMoney - $lateMoney);
+        $extraJob = $extraJobSalary;
+        $meal = $mealAllowance;
+
+        if ($workMinutes == 0) {
+        $extraJob = 0;
+        $meal = 0;
+    }
+
+        $dailyTotal = intval(
+        $dailySalary
+        + $extraJob
+        + $meal
+        + $overtimeMoney
+        - $lateMoney
+    );
 
         return [
 
-            'work_minutes' => $workMinutes,
+    'work_minutes' => $workMinutes,
 
-            'overtime_minutes' => $overtimeRounded,
-            'late_minutes' => $lateRounded,
+    'overtime_minutes' => $overtimeRounded,
+    'late_minutes' => $lateRounded,
 
-            'overtime_decimal' => $overtimeDecimal,
-            'late_decimal' => $lateDecimal,
+    'overtime_decimal' => $overtimeDecimal,
+    'late_decimal' => $lateDecimal,
 
-            'daily_total' => $dailyTotal
+    'overtime_money' => $overtimeMoney,
+    'late_money' => $lateMoney,
 
-        ];
+    'daily_total' => $dailyTotal
+];
     }
+
+    private static function roundMinutes($minutes)
+{
+
+    if ($minutes <= 9) {
+        return 0;
+    }
+
+    if ($minutes <= 20) {
+        return 15;
+    }
+
+    if ($minutes <= 39) {
+        return 30;
+    }
+
+    if ($minutes <= 49) {
+        return 45;
+    }
+
+    return 60;
+
+}
+
 }
