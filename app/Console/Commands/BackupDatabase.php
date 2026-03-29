@@ -47,7 +47,7 @@ class BackupDatabase extends Command
             $this->info("Backup success!");
             $this->info("File saved to: {$backupPath}");
 
-            $uploadCommand = "rclone copy {$backupPath} gdrive:dhardhes-database-backup --drive-chunk-size 8M --tpslimit 2 --tpslimit-burst 2";
+            $uploadCommand = "rclone copy {$backupPath} gdrive:dhardhes-backups/ops --drive-chunk-size 8M --tpslimit 2 --tpslimit-burst 2";
 
 exec($uploadCommand, $uploadOutput, $uploadResult);
 

@@ -1,107 +1,125 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<meta charset="utf-8">
+<meta charset="UTF-8">
+<title>Dashboard OPS</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Dhardhes OPS</title>
-
 <style>
 
-<style>
+*{
+box-sizing:border-box;
+}
 
 body{
-font-family:Arial;
-background:linear-gradient(135deg,#0f172a,#1e293b,#111827);
+font-family:Arial, Helvetica, sans-serif;
+background:#f1f5f9;
 margin:0;
-color:white;
 }
 
-.header{
-background:#020617;
-color:white;
-padding:18px;
-font-size:22px;
-text-align:center;
-font-weight:bold;
-letter-spacing:1px;
+/* TOPBAR */
+
+.topbar{
+background:white;
+padding:15px 25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
-/* CONTAINER */
+.topbar h1{
+font-size:18px;
+margin:0;
+}
+
+.user-menu{
+display:flex;
+gap:15px;
+align-items:center;
+}
+
+.user-menu a{
+text-decoration:none;
+color:#111827;
+font-size:14px;
+}
+
+.logout-btn{
+background:#ef4444;
+color:white;
+padding:6px 10px;
+border-radius:6px;
+font-size:13px;
+}
+
+/* CONTENT */
 
 .container{
-max-width:1000px;
+max-width:1100px;
 margin:auto;
-margin-top:40px;
+padding:30px 20px;
+}
+
+h2{
+margin-bottom:25px;
+color:#111827;
+}
+
+/* GRID */
+
+.grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
 gap:20px;
-padding:20px;
 }
 
 /* CARD */
 
-.card{
-padding:40px;
-text-align:center;
-border-radius:14px;
-text-decoration:none;
+.menu{
+display:block;
+padding:22px;
+border-radius:12px;
 color:white;
-font-size:20px;
-font-weight:bold;
-box-shadow:0 10px 25px rgba(0,0,0,0.4);
-transition:all 0.25s;
+text-decoration:none;
+font-size:17px;
+font-weight:600;
+box-shadow:0 6px 14px rgba(0,0,0,0.08);
+transition:all .2s ease;
 }
 
-.card:hover{
-transform:scale(1.05);
+.menu span{
+display:block;
+font-size:13px;
+opacity:0.85;
+margin-top:4px;
+font-weight:normal;
 }
 
-/* WARNA CARD */
-
-.card.absensi{
-background:linear-gradient(135deg,#ef4444,#f97316);
+.menu:hover{
+transform:translateY(-3px);
+box-shadow:0 10px 22px rgba(0,0,0,0.15);
 }
 
-.card.produksi{
-background:linear-gradient(135deg,#3b82f6,#6366f1);
+/* COLORS */
+
+.blue{
+background:linear-gradient(135deg,#3b82f6,#1d4ed8);
 }
 
-.card.master{
-background:linear-gradient(135deg,#10b981,#059669);
+.purple{
+background:linear-gradient(135deg,#a855f7,#6d28d9);
 }
 
-.card.performa{
-background:linear-gradient(135deg,#a855f7,#ec4899);
+.orange{
+background:linear-gradient(135deg,#f97316,#c2410c);
 }
 
-.card.kasbon{
-background:linear-gradient(135deg,#f59e0b,#d97706);
-}
-
-.card.backup{
-background:linear-gradient(135deg,#06b6d4,#0891b2);
-}
-
-/* RESPONSIVE HP */
-
-@media (max-width:768px){
-
-.container{
-grid-template-columns:1fr;
-margin-top:30px;
-}
-
-.card{
-padding:30px;
-font-size:18px;
-}
-
-.header{
-font-size:20px;
-}
-
+.dark{
+background:linear-gradient(135deg,#475569,#1e293b);
 }
 
 </style>
@@ -110,35 +128,51 @@ font-size:20px;
 
 <body>
 
-<div class="header">
-Dhardhes OPS Dashboard
+<div class="topbar">
+
+<h1>OPS Dhardhes</h1>
+
+<div class="user-menu">
+
+<span>{{ Auth::user()->name }}</span>
+
+<a href="/profile">Profile</a>
+
+<form method="POST" action="/logout" style="display:inline;">
+@csrf
+<button class="logout-btn">Logout</button>
+</form>
+
 </div>
+
+</div>
+
 
 <div class="container">
 
-<a class="card absensi" href="/attendance/upload">
-Absensi Karyawan
-</a>
+<div class="grid">
 
-<a class="card produksi" href="#">
-Produksi
-</a>
-
-<a class="card master" href="/employees">
-Master Karyawan
-</a>
-
-<a class="card performa" href="#">
-Performa Karyawan
-</a>
-
-<a class="card kasbon" href="/cash-loans">
+<a class="menu blue" href="/cash-loans">
 Kasbon Karyawan
+<span>Kelola kasbon karyawan</span>
 </a>
 
-<a class="card backup" href="/database-backup">
-Database Backup
+<a class="menu purple" href="/attendance/upload">
+Laporan Absensi
+<span>Upload & lihat laporan</span>
 </a>
+
+<a class="menu orange" href="/employees">
+Data Karyawan
+<span>Master data karyawan</span>
+</a>
+
+<a class="menu dark" href="/database-backup">
+Backup Database
+<span>Backup manual database</span>
+</a>
+
+</div>
 
 </div>
 

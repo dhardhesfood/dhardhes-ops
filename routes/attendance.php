@@ -15,6 +15,10 @@ Route::prefix('attendance')->group(function () {
 
     Route::post('/set-bonus',[AttendanceReportController::class,'setBonus']);
 
+    Route::post('/pay-salary',[AttendanceReportController::class,'paySalary']);
+
+    Route::delete('/destroy/{employee}/{month}', [AttendanceController::class, 'destroy'])->name('attendance.destroy');
+
     Route::get('/report/{employee}/{month}', [AttendanceReportController::class, 'report']);
 
     Route::get('/report-view/{employee}/{month}', [AttendanceReportController::class, 'reportView']);

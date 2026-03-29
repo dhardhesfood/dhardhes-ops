@@ -3,6 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kasbon Karyawan</title>
 
 <style>
@@ -41,6 +42,15 @@ margin-bottom:20px;
 display:grid;
 grid-template-columns:1fr 1fr 1fr 1fr;
 gap:15px;
+}
+
+/* RESPONSIVE HP */
+@media (max-width:768px){
+
+.grid{
+grid-template-columns:1fr;
+}
+
 }
 
 input,select{
@@ -108,6 +118,32 @@ border-radius:6px;
 text-decoration:none;
 color:#333;
 font-size:13px;
+}
+
+@media (max-width:768px){
+
+body{
+padding:15px;
+}
+
+.card{
+padding:18px;
+}
+
+h1{
+font-size:22px;
+}
+
+th,td{
+font-size:13px;
+padding:10px;
+}
+
+button{
+padding:8px 14px;
+font-size:13px;
+}
+
 }
 
 </style>
@@ -178,6 +214,7 @@ font-size:13px;
 
 <div class="card-title">Daftar Kasbon</div>
 
+<div style="overflow-x:auto;">
 <table>
 
 <thead>
@@ -236,7 +273,7 @@ font-size:13px;
 
 <?php echo csrf_field(); ?>
 
-<input type="number" name="amount" placeholder="Bayar" required style="width:80px">
+<input type="number" name="amount" placeholder="Bayar" required style="width:80px;max-width:80px">
 
 <button type="submit">Bayar</button>
 
@@ -257,6 +294,7 @@ font-size:13px;
 </tbody>
 
 </table>
+</div>
 
 </div>
 

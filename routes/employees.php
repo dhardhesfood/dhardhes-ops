@@ -43,4 +43,7 @@ Route::post('/employees', function () {
 
 });
 
+Route::get('/employees/{id}/edit', [EmployeeController::class, 'edit']);
+Route::put('/employees/{id}', [EmployeeController::class, 'update']);
+
 Route::post('/employees/{id}/toggle',[EmployeeController::class,'toggleStatus']);
