@@ -23,6 +23,8 @@ Route::prefix('attendance')->group(function () {
 
     Route::get('/report-view/{employee}/{month}', [AttendanceReportController::class, 'reportView']);
 
+    Route::get('/export/{employee}/{month}', [AttendanceReportController::class, 'exportExcel']);
+
     Route::get('/upload', function () {
 
         $employees = Employee::where('status','active')->get();

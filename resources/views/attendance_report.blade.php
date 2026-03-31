@@ -385,7 +385,19 @@ Bayar Gaji
 
 </form>
 
-<button onclick="window.print()">Print</button>
+<div style="margin-top:10px;">
+
+<button onclick="window.print()" 
+style="background:#64748b;color:white;padding:8px 14px;border:none;border-radius:6px;cursor:pointer;">
+Print
+</button>
+
+<a href="/attendance/export/{{ request()->segment(3) }}/{{ $month }}"
+style="background:#16a34a;color:white;padding:8px 14px;border-radius:6px;text-decoration:none;margin-left:8px;">
+Export Excel
+</a>
+
+</div>
 
 </div>
 </body>

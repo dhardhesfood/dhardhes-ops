@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\EmployeeCashLoan;
+use App\Exports\AttendanceExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AttendanceReportController extends Controller
 {
@@ -203,6 +205,81 @@ public function setBonus(Request $request)
 
     return back()->with('success','Bonus berhasil disimpan');
 
+}
+
+public function exportExcel($employeeId, $month)
+{
+    $rows = \DB::table('attendance_logs as a')
+        ->join('employees as e','e.id','=','a.employee_id')
+        ->select(
+            'e.name',
+            'a.date',
+            'a.check_in',
+            'a.check_out',
+            'a.work_minutes',
+            'a.overtime_minutes',
+            'a.late_minutes',
+            'a.extra_job_salary',
+            'a.meal_allowance',
+            'a.daily_total',
+            'a.salary_paid',
+            'a.loan_deduction',
+            'a.bonus_amount'
+        )
+        ->where('a.employee_id',$employeeId)
+        ->whereRaw("DATE_FORMAT(a.date,'%Y-%m') = ?",[$month])
+        ->orderBy('a.date')
+        ->get();
+
+    $employee = $rows->first()->name ?? '';
+
+    $totalWorkDays = $rows->whereNotNull('check_in')->count();
+    $totalOvertime = $rows->sum('overtime_minutes');
+    $totalLate = $rows->sum('late_minutes');
+
+    $presentRows = $rows->whereNotNull('check_in');
+
+    $totalSalary = $presentRows->sum('daily_total');
+    $totalExtraJob = $presentRows->sum('extra_job_salary');
+    $totalMealAllowance = $presentRows->sum('meal_allowance');
+
+    $salaryPaid = $rows->max('salary_paid');
+    $bonusAmount = $rows->max('bonus_amount');
+
+    if($salaryPaid){
+        $loanDeduction = $rows->max('loan_deduction');
+    }else{
+        $loan = \App\Models\EmployeeCashLoan::where('employee_id',$employeeId)
+                ->where('status','active')
+                ->first();
+
+        $loanDeduction = 0;
+
+        if($loan){
+            $loanDeduction = min($loan->remaining_amount,$totalSalary);
+        }
+    }
+
+    $salaryReceived = $totalSalary - $loanDeduction + $bonusAmount;
+
+    $summary = [
+        'totalWorkDays' => $totalWorkDays,
+        'totalOvertime' => $totalOvertime,
+        'totalLate' => $totalLate,
+        'totalExtraJob' => $totalExtraJob,
+        'totalMealAllowance' => $totalMealAllowance,
+        'totalSalary' => $totalSalary,
+        'bonusAmount' => $bonusAmount,
+        'loanDeduction' => $loanDeduction,
+        'salaryReceived' => $salaryReceived
+    ];
+
+    $fileName = 'Laporan_Absensi_'.$employee.'_'.$month.'.xlsx';
+
+    return Excel::download(
+        new AttendanceExport($rows, $summary, $employee, $month),
+        $fileName
+    );
 }
 
 }
