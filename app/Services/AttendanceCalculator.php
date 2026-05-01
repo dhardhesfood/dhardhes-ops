@@ -75,23 +75,30 @@ class AttendanceCalculator
     private static function roundMinutes($minutes)
 {
 
-    if ($minutes <= 9) {
-        return 0;
-    }
+    if ($minutes <= 0) {
+    return 0;
+}
 
-    if ($minutes <= 20) {
-        return 15;
-    }
+// ambil kelipatan 60
+$fullHours = floor($minutes / 60) * 60;
 
-    if ($minutes <= 39) {
-        return 30;
-    }
+// sisa menit
+$remaining = $minutes % 60;
 
-    if ($minutes <= 49) {
-        return 45;
-    }
+// pembulatan sisa pakai aturan lama
+if ($remaining <= 9) {
+    $rounded = 0;
+} elseif ($remaining <= 20) {
+    $rounded = 15;
+} elseif ($remaining <= 39) {
+    $rounded = 30;
+} elseif ($remaining <= 49) {
+    $rounded = 45;
+} else {
+    $rounded = 60;
+}
 
-    return 60;
+return $fullHours + $rounded;
 
 }
 

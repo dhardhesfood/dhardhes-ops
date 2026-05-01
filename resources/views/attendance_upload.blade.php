@@ -5,23 +5,25 @@
 <meta charset="utf-8">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>Upload Absensi</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
 
 body{
-font-family:'Segoe UI', Arial, sans-serif;
-background:#f4f6fb;
+font-family:'Inter', sans-serif;
+background:linear-gradient(135deg,#eef2ff,#f8fafc);
 margin:0;
 padding:40px;
 }
 
 .container{
-max-width:950px;
+max-width:1000px;
 margin:auto;
 background:white;
-padding:30px;
-border-radius:10px;
-box-shadow:0 8px 25px rgba(0,0,0,0.08);
+padding:35px;
+border-radius:16px;
+box-shadow:0 20px 40px rgba(0,0,0,0.08);
 }
 
 .header{
@@ -32,20 +34,28 @@ margin-bottom:25px;
 }
 
 .back-btn{
-background:#e5e7eb;
+background:#f1f5f9;
 padding:8px 14px;
-border-radius:6px;
+border-radius:8px;
 text-decoration:none;
-color:#333;
-font-size:14px;
+color:#334155;
+font-size:13px;
+transition:0.2s;
+}
+
+.back-btn:hover{
+background:#e2e8f0;
 }
 
 .form-grid{
-display:grid;
-grid-template-columns:1fr 1fr auto;
-gap:15px;
+grid-template-columns:1fr 1fr 1fr auto;
+gap:20px;
 align-items:end;
-margin-bottom:25px;
+margin-bottom:30px;
+padding:20px;
+background:#f8fafc;
+border-radius:12px;
+border:1px solid #e5e7eb;
 }
 
 label{
@@ -53,22 +63,34 @@ font-size:14px;
 color:#555;
 }
 
-select,input[type=file]{
+select,
+input[type=file],
+input[type=month]{
 width:100%;
-padding:8px;
-border:1px solid #ccc;
-border-radius:6px;
+padding:10px;
+border:1px solid #d1d5db;
+border-radius:8px;
 background:white;
+font-size:14px;
+height:40px;
+box-sizing:border-box;
 }
 
 button{
-background:#2563eb;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
 color:white;
 border:none;
-padding:10px 16px;
-border-radius:6px;
+padding:10px 18px;
+border-radius:8px;
 cursor:pointer;
 font-size:14px;
+font-weight:500;
+transition:0.2s;
+}
+
+button:hover{
+transform:translateY(-1px);
+box-shadow:0 5px 15px rgba(37,99,235,0.3);
 }
 
 button:hover{
@@ -77,15 +99,19 @@ background:#1d4ed8;
 
 table{
 width:100%;
-border-collapse:collapse;
-margin-top:15px;
+border-collapse:separate;
+border-spacing:0;
+margin-top:20px;
+overflow:hidden;
+border-radius:12px;
 }
 
 th{
 background:#f1f5f9;
-padding:10px;
+padding:12px;
 text-align:left;
-font-size:14px;
+font-size:13px;
+color:#475569;
 }
 
 td{
@@ -99,7 +125,8 @@ background:#fafafa;
 }
 
 tr:hover{
-background:#f3f4f6;
+background:#eef2ff;
+transition:0.2s;
 }
 
 .badge{
@@ -117,10 +144,10 @@ font-weight:500;
 }
 
 .download{
-background:#10b981;
+background:#22c55e;
 color:white;
-padding:6px 10px;
-border-radius:6px;
+padding:6px 12px;
+border-radius:8px;
 font-size:12px;
 text-decoration:none;
 }
@@ -132,8 +159,8 @@ background:#059669;
 .delete-btn{
 background:#ef4444;
 color:white;
-padding:6px 10px;
-border-radius:6px;
+padding:6px 12px;
+border-radius:8px;
 font-size:12px;
 border:none;
 cursor:pointer;
@@ -141,6 +168,33 @@ cursor:pointer;
 
 .delete-btn:hover{
 background:#dc2626;
+}
+
+.status-paid{
+background:#dcfce7;
+color:#166534;
+padding:5px 10px;
+border-radius:999px;
+font-size:12px;
+font-weight:600;
+}
+
+.status-unpaid{
+background:#fee2e2;
+color:#991b1b;
+padding:5px 10px;
+border-radius:999px;
+font-size:12px;
+font-weight:600;
+}
+
+input[type=month]::-webkit-calendar-picker-indicator {
+cursor: pointer;
+opacity: 0.6;
+}
+
+input[type=month]:hover::-webkit-calendar-picker-indicator {
+opacity: 1;
 }
 
 </style>
@@ -153,7 +207,10 @@ background:#dc2626;
 
 <div class="header">
 
-<h2>Upload Absensi Excel</h2>
+<h2 style="margin:0;font-weight:600;">
+<i class="fa-solid fa-file-excel" style="color:#16a34a;"></i>
+Upload Absensi Excel
+</h2>
 
 <div class="header-actions">
 
@@ -190,6 +247,12 @@ background:#dc2626;
 </div>
 
 <div>
+<label>Bulan</label>
+<input type="month" name="month" required>
+</div>
+
+
+<div>
 
 <label>File Excel</label>
 
@@ -197,12 +260,9 @@ background:#dc2626;
 
 </div>
 
-<div>
-
+<div style="display:flex;align-items:end;">
 <button type="submit">⬆ Upload</button>
-
 </div>
-
 </div>
 
 </form>
@@ -242,9 +302,9 @@ background:#dc2626;
 
 <td>
 @if($row->salary_paid)
-<span style="color:#16a34a;font-weight:600;">Sudah Dibayar</span>
+<span class="status-paid">✔ Sudah Dibayar</span>
 @else
-<span style="color:#dc2626;font-weight:600;">Belum Dibayar</span>
+<span class="status-unpaid">✖ Belum Dibayar</span>
 @endif
 </td>
 

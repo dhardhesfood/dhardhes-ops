@@ -55,7 +55,7 @@ SIMPAN FILE EXCEL KE STORAGE
 
 $file = $request->file('file');
 
-$month = date('Y-m');
+$month = $request->month;
 
 $filename = strtolower(str_replace(' ','_',$employee->name)).'_'.$month.'.xlsx';
 
@@ -88,7 +88,7 @@ $rows = Excel::toArray([], $file);
     }
 
     $day = substr($dateText, 0, 2);
-    $date = date('Y-m-' . $day);
+    $date = $month . '-' . $day;
 
     $checkIn = null;
     $checkOut = null;
@@ -152,8 +152,6 @@ $rows = Excel::toArray([], $file);
 
 );
    }
-
-      $month = date('Y-m');
 
       return redirect('/attendance/report-view/'.$employee->id.'/'.$month);
 
