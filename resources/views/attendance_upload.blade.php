@@ -269,6 +269,34 @@ Upload Absensi Excel
 
 <h3>Data Absensi Yang Sudah Diupload</h3>
 
+<form method="GET" action="/attendance/upload" style="margin-bottom:20px;">
+
+<div style="display:flex;gap:10px;align-items:end;">
+
+<div>
+<label>Filter Bulan</label>
+<input
+    type="month"
+    name="month"
+    value="{{ $selectedMonth ?? '' }}">
+</div>
+
+<div>
+<button type="submit">
+🔍 Filter
+</button>
+</div>
+
+<div>
+<a href="/attendance/upload" class="back-btn">
+Reset
+</a>
+</div>
+
+</div>
+
+</form>
+
 <table>
 
 <thead>

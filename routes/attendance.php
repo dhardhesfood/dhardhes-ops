@@ -25,11 +25,11 @@ Route::prefix('attendance')->group(function () {
 
     Route::get('/export/{employee}/{month}', [AttendanceReportController::class, 'exportExcel']);
 
-    Route::get('/upload', function () {
+    Route::get('/upload', function (\Illuminate\Http\Request $request) {
 
         $employees = Employee::where('status','active')->get();
 
-        $uploads = DB::table('attendance_logs as a')
+        $uploadsQuery = DB::table('attendance_logs as a')
     ->join('employees as e','e.id','=','a.employee_id')
     ->select(
         'e.id as employee_id',
@@ -37,15 +37,25 @@ Route::prefix('attendance')->group(function () {
         DB::raw("DATE_FORMAT(a.date,'%Y-%m') as month"),
         DB::raw("MAX(a.salary_paid) as salary_paid"),
         DB::raw("MAX(a.salary_paid_at) as salary_paid_at")
-    )
+    );
+
+if ($request->filled('month')) {
+    $uploadsQuery->whereRaw(
+        "DATE_FORMAT(a.date,'%Y-%m') = ?",
+        [$request->month]
+    );
+}
+
+$uploads = $uploadsQuery
     ->groupBy('e.id','e.name','month')
     ->orderBy('month','desc')
     ->get();
 
         return view('attendance_upload', [
-            'employees' => $employees,
-            'uploads' => $uploads
-        ]);
+    'employees' => $employees,
+    'uploads' => $uploads,
+    'selectedMonth' => $request->month
+]);
 
     });
 
